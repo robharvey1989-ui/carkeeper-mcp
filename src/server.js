@@ -153,6 +153,14 @@ const port = Number(process.env.PORT ?? 8787);
 const MCP_PATH = "/mcp";
 
 const httpServer = createHttpServer(async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "content-type, mcp-session-id, authorization, accept"
+  );
+  res.setHeader("Access-Control-Expose-Headers", "Mcp-Session-Id");
+
   if (!req.url) {
     res.writeHead(400).end("Missing URL");
     return;
@@ -160,13 +168,8 @@ const httpServer = createHttpServer(async (req, res) => {
 
   const url = new URL(req.url, `http://${req.headers.host ?? "localhost"}`);
 
-  if (req.method === "OPTIONS" && url.pathname === MCP_PATH) {
-    res.writeHead(204, {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, GET, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": "content-type, mcp-session-id, authorization",
-      "Access-Control-Expose-Headers": "Mcp-Session-Id"
-    });
+  if (req.method === "OPTIONS") {
+    res.writeHead(204);
     res.end();
     return;
   }
@@ -184,9 +187,6 @@ const httpServer = createHttpServer(async (req, res) => {
 
   const MCP_METHODS = new Set(["POST", "GET", "DELETE"]);
   if (url.pathname === MCP_PATH && req.method && MCP_METHODS.has(req.method)) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Expose-Headers", "Mcp-Session-Id");
-
     const server = createCarKeeperServer();
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: undefined,
