@@ -51,7 +51,7 @@ function createCarKeeperServer() {
       title: "Check a vehicle with CarKeeper",
       description: "Use this when the user wants factual information or risk signals about a specific UK vehicle registration.",
       inputSchema: { registration },
-      annotations: { readOnlyHint: true, openWorldHint: true, destructiveHint: false }
+      annotations: { readOnlyHint: true, openWorldHint: false, destructiveHint: false }
     },
     async (args) => {
       try {
@@ -69,7 +69,7 @@ function createCarKeeperServer() {
       title: "Analyse a car purchase",
       description: "Use this when the user is considering buying a specific UK vehicle and wants CarKeeper's Buyer Score, price assessment, risks, seller questions and negotiation points.",
       inputSchema: { registration, mileage, askingPrice, advertText, advertUrl, imageUrls },
-      annotations: { readOnlyHint: true, openWorldHint: true, destructiveHint: false }
+      annotations: { readOnlyHint: true, openWorldHint: false, destructiveHint: false }
     },
     async (args) => {
       try {
@@ -96,7 +96,7 @@ function createCarKeeperServer() {
           imageUrls
         })).min(2).max(5)
       },
-      annotations: { readOnlyHint: true, openWorldHint: true, destructiveHint: false }
+      annotations: { readOnlyHint: true, openWorldHint: false, destructiveHint: false }
     },
     async (args) => {
       try {
