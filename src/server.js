@@ -151,6 +151,7 @@ function createCarKeeperServer() {
 
 const port = Number(process.env.PORT ?? 8787);
 const MCP_PATH = "/mcp";
+const OPENAI_CHALLENGE_PATH = "/.well-known/openai-apps-challenge";
 
 const httpServer = createHttpServer(async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -171,6 +172,21 @@ const httpServer = createHttpServer(async (req, res) => {
   if (req.method === "OPTIONS") {
     res.writeHead(204);
     res.end();
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === OPENAI_CHALLENGE_PATH) {
+    const token = String(process.env.OPENAI_APPS_CHALLENGE_TOKEN ?? "").trim();
+    if (!token) {
+      res.writeHead(503, { "content-type": "text/plain; charset=utf-8" });
+      res.end("OpenAI app verification token is not configured.");
+      return;
+    }
+    res.writeHead(200, {
+      "content-type": "text/plain; charset=utf-8",
+      "cache-control": "no-store"
+    });
+    res.end(token);
     return;
   }
 
